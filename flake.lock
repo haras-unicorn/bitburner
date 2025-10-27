@@ -1,0 +1,49 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1761585860,
+        "narHash": "sha256-3ZvWg+iVqICjfNGCB5D7zMd2ihWtAGKw56uNQpNpsA8=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "e45bcbd3e0c3f794c7902be1d8dcd218127bfe63",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "release-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "perch": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1745069609,
+        "narHash": "sha256-KdU6UM7VrmfQ7CjTPl+osE4BSmXX4SwLPNnHgt90yFc=",
+        "owner": "altibiz",
+        "repo": "perch",
+        "rev": "63d34636e2dd24e252f4bf49d03ee3c547b2a7ec",
+        "type": "github"
+      },
+      "original": {
+        "owner": "altibiz",
+        "ref": "refs/tags/2.2.1",
+        "repo": "perch",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "perch": "perch"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

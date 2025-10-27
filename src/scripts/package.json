@@ -1,0 +1,13 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "private": true,
+  "type": "module",
+  "name": "bitripper-scripts",
+  "version": "0.1.0",
+  "dependencies": {
+    "bitripper-lib": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
+}

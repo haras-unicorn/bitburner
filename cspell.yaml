@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/streetsidesoftware/cspell/refs/heads/main/cspell.schema.json
+useGitignore: true
+version: "0.2"
+language: en
+ignorePaths:
+  - justfile
+  - flake.nix
+  - flake.lock
+  - cspell.yaml
+  - package.json
+  - pnpm-lock.yaml
+  - scripts/flake
+ignoreWords:
+  - haras
+  - justfile
+  - nushell

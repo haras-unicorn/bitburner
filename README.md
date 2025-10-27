@@ -1,0 +1,3 @@
+# Bitripper
+
+My Bitburner playground.

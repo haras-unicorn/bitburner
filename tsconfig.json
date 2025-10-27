@@ -1,0 +1,10 @@
+{
+  "$schema": "https://www.schemastore.org/tsconfig.json",
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "bitripper-lib/*": ["src/lib/src/*"],
+      "bitripper-scripts/*": ["src/scripts/src/*"]
+    }
+  }
+}
