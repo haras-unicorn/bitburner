@@ -5,6 +5,13 @@
   "name": "bitripper-lib",
   "version": "0.1.0",
   "devDependencies": {
+    "@types/luxon": "^3.7.1",
+    "@types/yargs": "^17.0.34",
     "tsup": "^8.5.0"
+  },
+  "dependencies": {
+    "luxon": "^3.7.2",
+    "yargs": "^18.0.0-browser.2",
+    "zod": "^4.1.12"
   }
 }

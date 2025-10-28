@@ -1,11 +1,11 @@
+import { withStringArg } from "bitripper-lib/args/simple";
 import {
   createContext,
   withHackingLevel,
   withHostname,
-  withLog,
   withPortAttacks,
-  withStringArg,
 } from "bitripper-lib/ctxs";
+import { withLog } from "bitripper-lib/log";
 import type NS from "bitripper-lib/ns";
 
 export async function main(_ns: NS) {

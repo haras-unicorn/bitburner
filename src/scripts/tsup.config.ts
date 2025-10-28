@@ -13,5 +13,5 @@ export default defineConfig({
   treeshake: true,
   outDir: "dist",
   minify: false,
-  noExternal: ["bitripper-lib"],
+  noExternal: [/(.*)/],
 });

@@ -1,5 +1,10 @@
 {
   "$schema": "https://www.schemastore.org/tsconfig.json",
   "include": ["src"],
+  "compilerOptions": {
+    "paths": {
+      "bitripper-lib/*": ["./src/*"]
+    }
+  },
   "extends": "../tsconfig.json"
 }
