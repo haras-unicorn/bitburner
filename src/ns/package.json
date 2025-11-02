@@ -1,0 +1,7 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "private": true,
+  "type": "module",
+  "name": "bitripper-ns",
+  "version": "0.1.0"
+}

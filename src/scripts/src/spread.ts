@@ -1,4 +1,4 @@
-import { withStringArg } from "bitripper-lib/args/simple";
+import { withStringArg } from "bitripper-lib/args/pos";
 import {
   createContext,
   withHackingLevel,
@@ -6,7 +6,7 @@ import {
   withPortAttacks,
 } from "bitripper-lib/ctxs";
 import { withLog } from "bitripper-lib/log";
-import type NS from "bitripper-lib/ns";
+import type NS from "bitripper-ns/ns";
 
 export async function main(ns: NS) {
   const ctx = createContext(ns)

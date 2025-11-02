@@ -27,6 +27,10 @@ lint:
     biome lint '{{ root }}'
     cd '{{ root }}'; tsc --noEmit
 
+test:
+    pnpm -r "build:type"
+    pnpm -r "test:type"
+
 start:
     concurrently \
       --names tsup,bitburner-filesync,bitburner \

@@ -4,14 +4,24 @@
   "type": "module",
   "name": "bitripper-lib",
   "version": "0.1.0",
+  "scripts": {
+    "test:js": "vitest run",
+    "test:js:watch": "vitest --watch",
+    "build:ts": "tsc --declaration --emitDeclarationOnly --outFile './dist/index.d.ts' --isolatedModules false --declarationMap false",
+    "test:ts:tsd": "tsd --files './src/**/*.ts' --typings './dist/index.d.ts'",
+    "test:ts": "pnpm build:ts && pnpm test:ts:tsd",
+    "test:ts:watch": "chokidar './src/**/*.ts' -c 'pnpm test:ts'",
+    "build": "pnpm '/^build:(js|ts)$/'",
+    "test": "pnpm '/^test:(js|ts)$/'",
+    "test:watch": "pnpm '/^test:(js|ts):watch$/'"
+  },
   "devDependencies": {
-    "@types/luxon": "^3.7.1",
-    "@types/yargs": "^17.0.34",
-    "tsup": "^8.5.0"
+    "chokidar-cli": "^3.0.0",
+    "jsdom": "^27.1.0",
+    "tsd": "^0.33.0",
+    "vitest": "^4.0.6"
   },
   "dependencies": {
-    "luxon": "^3.7.2",
-    "yargs": "^18.0.0-browser.2",
-    "zod": "^4.1.12"
+    "bitripper-ns": "workspace:*"
   }
 }

@@ -1,5 +1,4 @@
-import type NS from "bitripper-lib/ns";
-import { DateTime, Duration } from "luxon";
+import type NS from "bitripper-ns/ns";
 
 export type ScheduleBatchRequest = {
   ns: NS;
@@ -49,42 +48,34 @@ export async function scheduleBatch({
     .reduce((acc, next) => acc + next);
 
   const durations = scripts.map((script) =>
-    Duration.fromMillis(
-      script === hack
-        ? ns.getHackTime(target)
-        : script === weaken
-          ? ns.getWeakenTime(target)
-          : ns.getGrowTime(target),
-    ),
+    script === hack
+      ? ns.getHackTime(target)
+      : script === weaken
+        ? ns.getWeakenTime(target)
+        : ns.getGrowTime(target),
   );
-  const maxDuration = Duration.fromMillis(
-    Math.max(...durations.map((duration) => duration.milliseconds)),
-  );
-  const stepDuration = Duration.fromMillis(
-    Math.max(
-      maxDuration.milliseconds / workers + stepDelayMillis,
-      minStepMillis,
-    ),
+  const maxDuration = Math.max(...durations.map((duration) => duration));
+  const stepDuration = Math.max(
+    maxDuration / workers + stepDelayMillis,
+    minStepMillis,
   );
 
-  const start = DateTime.utc()
-    .plus({ milliseconds: startDelayMillis })
-    .plus(maxDuration);
-  const end = start.plus(maxDuration.plus(maxDuration));
+  const start = Date.now() + startDelayMillis + maxDuration;
+  const end = start + maxDuration;
 
-  const tasks = Array.from(
-    Array(Math.ceil(end.diff(start).milliseconds / stepDuration.milliseconds)),
-  ).map((i) => {
-    const script = scripts[i % scripts.length];
-    const duration = durations[i % durations.length];
-    const end = start.plus({ milliseconds: stepDuration.milliseconds * i });
-    return {
-      script: script,
-      start: end.minus(duration),
-      end: end,
-    };
-  });
-  tasks.sort((l, r) => l.start.diff(r.start).milliseconds);
+  const tasks = Array.from(Array(Math.ceil(end - start / stepDuration))).map(
+    (i) => {
+      const script = scripts[i % scripts.length];
+      const duration = durations[i % durations.length];
+      const end = start + stepDuration;
+      return {
+        script: script,
+        start: end - duration,
+        end: end,
+      };
+    },
+  );
+  tasks.sort((l, r) => l.start - r.start);
 
   const startedPids = [];
 
@@ -114,16 +105,15 @@ export async function scheduleBatch({
     const taskHost = taskHosts[0];
 
     const script = task.script;
-    const duration = Duration.fromMillis(
+    const duration =
       script === hack
         ? ns.getHackTime(target)
         : script === weaken
           ? ns.getWeakenTime(target)
-          : ns.getGrowTime(target),
-    );
+          : ns.getGrowTime(target);
 
-    const start = task.end.minus(duration);
-    const waitMillis = start.diff(DateTime.utc()).milliseconds;
+    const start = task.end - duration;
+    const waitMillis = start - Date.now();
     if (waitMillis < 0) {
       for (const p of startedPids) {
         ns.kill(p);

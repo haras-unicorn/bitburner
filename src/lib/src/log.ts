@@ -1,5 +1,5 @@
 import { adding } from "bitripper-lib/decor";
-import type NS from "bitripper-lib/ns";
+import type NS from "bitripper-ns/ns";
 
 export type LogArg = number | string | boolean | object;
 

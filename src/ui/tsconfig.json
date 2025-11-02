@@ -1,12 +1,13 @@
 {
   "$schema": "https://www.schemastore.org/tsconfig.json",
   "extends": "../tsconfig.json",
-  "references": [{ "path": "../ns" }],
+  "references": [{ "path": "../ns" }, { "path": "../lib" }],
   "include": ["src"],
   "compilerOptions": {
     "paths": {
       "bitripper-ns/*": ["../ns/src/*"],
-      "bitripper-lib/*": ["./src/*"]
+      "bitripper-lib/*": ["../lib/src/*"],
+      "bitripper-ui/*": ["./src/*"]
     }
   }
 }

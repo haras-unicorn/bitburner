@@ -43,6 +43,10 @@ let
         pnpm ls -r --depth -1 --json > pkgs.json
 
         jq -r '.[].path' pkgs.json | while read -r path; do
+          if [ ! -d "$path/node_modules" ]; then
+            mkdir -p "$path/node_modules"
+          fi
+
           rel="''${path#$PWD}"
           mkdir -p "$out/lib/$rel"
           cp -R "$path/node_modules" "$out/lib/$rel"

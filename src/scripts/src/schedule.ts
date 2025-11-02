@@ -1,14 +1,14 @@
-import { coerceJsonArrayArg, withYargs } from "bitripper-lib/args/yargs";
+import { withArgs } from "bitripper-lib/args/parsed";
 import { type ScheduleBatchRequest, scheduleBatch } from "bitripper-lib/batch";
 import { createContext } from "bitripper-lib/ctxs";
 import { withLog } from "bitripper-lib/log";
-import type NS from "bitripper-lib/ns";
+import type NS from "bitripper-ns/ns";
 
 export async function main(_ns: NS) {
   const {
     ns,
     logMultiline,
-    yargs: {
+    args: {
       hosts,
       weaken,
       grow,
@@ -22,33 +22,34 @@ export async function main(_ns: NS) {
       thresholdTolerance,
       leftoverRam,
     },
-  } = await createContext(_ns)
+  } = createContext(_ns)
     .decorate(withLog)
-    .design(
-      withYargs("schedule", (yargs) =>
-        yargs
-          .positional("hosts", {
-            type: "string",
-            demandOption: true,
-            coerce: coerceJsonArrayArg(_ns, (x) => typeof x === "string"),
-          })
-          .positional("weaken", { type: "string", demandOption: true })
-          .positional("hack", { type: "string", demandOption: true })
-          .positional("grow", { type: "string", demandOption: true })
-          .option("startDelayMillis", { type: "number", default: 500 })
-          .option("stepDelayMillis", { type: "number", default: 100 })
-          .option("minStepMillis", { type: "number", default: 500 })
-          .option("abortDelayMillis", { type: "number", default: 1000 })
-          .option("moneyPercentThreshold", { type: "number", default: 0.8 })
-          .option("securityMultiplierThreshold", {
-            type: "number",
-            default: 1.2,
-          })
-          .option("thresholdTolerance", { type: "number", default: 0.1 })
-          .option("leftoverRam", { type: "number", default: 2 }),
+    .decorate(
+      withArgs("schedule", (args) =>
+        args
+          .arg("hosts", "string")
+          .arg("weaken", "string")
+          .arg("grow", "string")
+          .arg("hack", "string")
+          .arg("startDelayMillis", "number")
+          .default(500)
+          .arg("stepDelayMillis", "number")
+          .default(100)
+          .arg("minStepMillis", "number")
+          .default(500)
+          .arg("abortDelayMillis", "number")
+          .default(1000)
+          .arg("moneyPercentThreshold", "number")
+          .default(0.8)
+          .arg("securityMultiplierThreshold", "number")
+          .default(1.2)
+          .arg("thresholdTolerance", "number")
+          .default(0.1)
+          .arg("leftoverRam", "number")
+          .default(2)
+          .build(),
       ),
-    )
-    .build();
+    );
 
   if (hosts.length < 1) {
     throw new Error("expected at least one host");

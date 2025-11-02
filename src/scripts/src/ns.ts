@@ -1,4 +1,4 @@
-import type NS from "bitripper-lib/ns";
+import type NS from "bitripper-ns/ns";
 
 export async function main(ns: NS) {
   const key = ns.args[0];

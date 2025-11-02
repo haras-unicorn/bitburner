@@ -2,14 +2,10 @@
   "$schema": "https://www.schemastore.org/package.json",
   "private": true,
   "type": "module",
-  "name": "bitripper-scripts",
+  "name": "bitripper-ui",
   "version": "0.1.0",
   "dependencies": {
     "bitripper-lib": "workspace:*",
-    "bitripper-ns": "workspace:*",
-    "bitripper-ui": "workspace:*"
-  },
-  "devDependencies": {
-    "tsup": "^8.5.0"
+    "bitripper-ns": "workspace:*"
   }
 }

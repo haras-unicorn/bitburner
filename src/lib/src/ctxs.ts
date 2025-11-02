@@ -4,57 +4,87 @@ import {
   type DecorationTypeSymbol,
   type Decorator,
 } from "bitripper-lib/decor";
-import type { NS } from "bitripper-lib/ns";
+import type { NS } from "bitripper-ns/ns";
 
 export type ContextBase = { ns: NS };
 
-export type Context<T extends object, O extends object = object> = ContextBase &
+export type SyncContext<T extends object> = ContextBase &
   T & {
     decorate: <R extends object, D extends Decorator<R>>(
       decorator: D,
-    ) => Context<T & D[typeof DecorationTypeSymbol], O>;
+    ) => SyncContext<T & D[typeof DecorationTypeSymbol]>;
     design: <R, B extends Builder<R>>(
       builder: B,
-    ) => Context<T, O & B[typeof BuildTypeSymbol]>;
-    build: () => PromiseLike<Context<T & O>>;
+    ) => AsyncContext<T, NonNullable<B[typeof BuildTypeSymbol]>>;
   };
 
-export const createContext = (ns: NS) => {
-  const context: Context<{ ns: NS }> = {
-    ns,
-    decorate: (decorator) => {
-      const decoration = decorator(context);
-      // biome-ignore lint/suspicious/noExplicitAny: mutate by copying keys
-      for (const key of Object.keys(decoration as any)) {
-        // biome-ignore lint/suspicious/noExplicitAny: need to mutate like this
-        (context as any)[key] = (decoration as any)[key];
-      }
-      // biome-ignore lint/suspicious/noExplicitAny: not the same type but has all properties
-      return context as any;
-    },
-    design: (builder) => {
-      const lastBuild = context.build;
-      const newBuild = async () => {
-        const built = await lastBuild();
-        const newBuild = await builder(built);
-        // biome-ignore lint/suspicious/noExplicitAny: mutate by copying keys
-        for (const key of Object.keys(newBuild as any)) {
-          // biome-ignore lint/suspicious/noExplicitAny: need to mutate like this
-          (built as any)[key] = (newBuild as any)[key];
+export type AsyncContext<T extends object, O extends object> = ContextBase &
+  T & {
+    decorate: <R extends object, D extends Decorator<R>>(
+      decorator: D,
+    ) => AsyncContext<T & D[typeof DecorationTypeSymbol], O>;
+    design: <R, B extends Builder<R>>(
+      builder: B,
+    ) => AsyncContext<T, O & B[typeof BuildTypeSymbol]>;
+    build: () => PromiseLike<T & O>;
+  };
+
+export type Context<T extends object, O extends object = object> = ContextBase &
+  T &
+  (never extends keyof O ? SyncContext<T> : AsyncContext<T, O>);
+
+export const createContext = (ns: NS): Context<{ ns: NS }> => {
+  const lift = <T extends object, O extends object, C extends Context<T, O>>(
+    initial: C,
+  ): C => {
+    const context = {
+      ...initial,
+      decorate: <R extends object, D extends Decorator<R>>(
+        decorator: D,
+      ): Context<T & D[typeof DecorationTypeSymbol], O> => {
+        const data = { ...context };
+        // @ts-expect-error
+        delete data.decorate;
+        // @ts-expect-error
+        delete data.design;
+        // @ts-expect-error
+        delete data.build;
+        const decoration = decorator(data);
+        return lift({ ...data, ...decoration });
+      },
+      design: <R, B extends Builder<R>>(
+        builder: B,
+      ): Context<T, O & B[typeof BuildTypeSymbol]> => {
+        let lastBuild: undefined | AsyncContext<T, object>["build"];
+        if ("build" in context) {
+          lastBuild = context.build as AsyncContext<T, object>["build"];
         }
-        return built;
-      };
-      context.build = newBuild;
-
-      // biome-ignore lint/suspicious/noExplicitAny: wont be right type but the new build is there
-      return context as any;
-    },
-    build: async () => {
-      // biome-ignore lint/suspicious/noExplicitAny: its the same type
-      return context as any;
-    },
+        const newBuild = async () => {
+          const data = { ...context };
+          // @ts-expect-error
+          delete data.decorate;
+          // @ts-expect-error
+          delete data.design;
+          // @ts-expect-error
+          delete data.build;
+          const newBuild = lastBuild
+            ? await builder({ ...data, ...(await lastBuild()) })
+            : await builder(data);
+          return { ...data, ...newBuild };
+        };
+        return lift({ ...context, build: newBuild });
+      },
+    };
+    return context;
   };
-  return context;
+
+  return lift({
+    ns,
+    // biome-ignore lint/style/noNonNullAssertion: it gets set in lift
+    decorate: null!,
+    // biome-ignore lint/style/noNonNullAssertion: it gets set in lift
+    design: null!,
+  });
 };
 
 export const withHostname = adding((ctx) => ({
